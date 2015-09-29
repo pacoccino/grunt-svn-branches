@@ -51,6 +51,11 @@ module.exports = function(grunt) {
             {
               svnDevUrl:      "http://svn.domain.com/svn/rep/Solution/tmp",
               svnProjectName: "cactus"
+            },
+            {
+              svnDevUrl:      "http://svn.domain.com/svn/rep/Solution/temp",
+              svnProjectName: "bob",
+              trunkize: true
             }
           ],
           destination: 'fake'

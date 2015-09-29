@@ -161,6 +161,27 @@ module.exports = function(grunt) {
       });
     };
 
+    var createDstFolder = function(config, callback) {
+
+      var destination = Helper.getFolderUrl(config, config.destination);
+
+      Svn.folderExists(config, destination, function(exists) {
+
+        if(!exists) {
+
+          var svnCmd = Svn.getMkdirCmd(destination);
+          svnCmd = Svn.addMessage(svnCmd, "Creating destination folder");
+          svnCmd = Svn.addCredentials(svnCmd, config);
+
+          ce(svnCmd, config, callback);
+        }
+        else {
+          callback(null, config);
+        }
+      });
+
+    };
+
     var deleteDstBranch = function(config, callback) {
 
       if(config.archive.noNeedDst) {
@@ -236,6 +257,7 @@ module.exports = function(grunt) {
       config.svnDevUrl = branch.svnDevUrl;
       config.svnBranchesUrl = branch.svnBranchesUrl || branch.svnDevUrl;
       config.svnProjectName = branch.svnProjectName;
+      config.trunkize = branch.trunkize || false;
 
       grunt.log.subhead("Creating branch:", config.svnProjectName);
 
@@ -247,6 +269,7 @@ module.exports = function(grunt) {
           createArchiveFolder,
           archiveSrcBranch,
           archiveDstBranch,
+          createDstFolder,
           deleteDstBranch,
           copyBranch,
           endWaterfall

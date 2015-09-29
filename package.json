@@ -1,6 +1,6 @@
 {
   "name": "grunt-svn-branches",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Automatisation de creation de branches",
   "keywords": [
     "svn",

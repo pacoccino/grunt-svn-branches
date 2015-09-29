@@ -16,40 +16,90 @@ Helper.ENV = {
 
 Helper.getProjectBranchName = function(config, env) {
 
-    switch(env) {
-        case Helper.ENV.DEV:
-            return config.svnProjectName;
+    if(!config.trunkize) {
 
-        case Helper.ENV.PREPROD:
-            return config.svnProjectName + '-preprod';
+        switch(env) {
+            case Helper.ENV.DEV:
+                return config.svnProjectName;
 
-        case Helper.ENV.SPRINT:
-            return config.svnProjectName + '-sprint';
+            case Helper.ENV.PREPROD:
+                return config.svnProjectName + '-preprod';
 
-        case Helper.ENV.PROD:
-            return config.svnProjectName + '-prod';
+            case Helper.ENV.SPRINT:
+                return config.svnProjectName + '-sprint';
 
-        case Helper.ENV.FAKE:
-            return config.svnProjectName + '-fake';
+            case Helper.ENV.PROD:
+                return config.svnProjectName + '-prod';
+
+            case Helper.ENV.FAKE:
+                return config.svnProjectName + '-fake';
+        }
     }
+    else {
+
+        switch(env) {
+            case Helper.ENV.DEV:
+                return 'trunk';
+
+            case Helper.ENV.PREPROD:
+                return 'preprod';
+
+            case Helper.ENV.SPRINT:
+                return 'sprint';
+
+            case Helper.ENV.PROD:
+                return 'prod';
+
+            case Helper.ENV.FAKE:
+                return 'fake';
+        }
+    }
+};
+
+Helper.getFolderUrl = function(config, env) {
+    var svnUrl = "";
+
+    if(!config.trunkize) {
+
+        switch(env) {
+            case Helper.ENV.DEV:
+                svnUrl += config.svnDevUrl;
+                break;
+
+            case Helper.ENV.PREPROD:
+            case Helper.ENV.SPRINT:
+            case Helper.ENV.PROD:
+            case Helper.ENV.FAKE:
+                svnUrl += config.svnBranchesUrl;
+                break;
+        }
+
+    }
+    else {
+        svnUrl += config.svnDevUrl;
+        svnUrl += Helper.SEPARATOR;
+        svnUrl += config.svnProjectName;
+
+        switch(env) {
+            case Helper.ENV.DEV:
+                break;
+
+            case Helper.ENV.PREPROD:
+            case Helper.ENV.SPRINT:
+            case Helper.ENV.PROD:
+            case Helper.ENV.FAKE:
+                svnUrl += Helper.SEPARATOR;
+                svnUrl += 'branches';
+                break;
+        }
+    }
+    return svnUrl;
 };
 
 Helper.getSVNUrl = function(config, env) {
     var svnUrl = "";
 
-    switch(env) {
-        case Helper.ENV.DEV:
-            svnUrl += config.svnDevUrl;
-            break;
-
-        case Helper.ENV.PREPROD:
-        case Helper.ENV.SPRINT:
-        case Helper.ENV.PROD:
-        case Helper.ENV.FAKE:
-            svnUrl += config.svnBranchesUrl;
-            break;
-    }
-
+    svnUrl += Helper.getFolderUrl(config, env);
     svnUrl += Helper.SEPARATOR;
     svnUrl += Helper.getProjectBranchName(config, env);
 
@@ -58,7 +108,12 @@ Helper.getSVNUrl = function(config, env) {
 
 Helper.getArchiveFolderUrl = function(config) {
 
-    return config.svnBranchesUrl + Helper.SEPARATOR + Helper.ARCHIVEFOLDER;
+    if(!config.trunkize) {
+        return config.svnBranchesUrl + Helper.SEPARATOR + Helper.ARCHIVEFOLDER;
+    }
+    else {
+        return config.svnDevUrl + Helper.SEPARATOR + config.svnProjectName + Helper.SEPARATOR + Helper.ARCHIVEFOLDER;
+    }
 };
 
 Helper.getArchiveUrl = function(config, env) {
